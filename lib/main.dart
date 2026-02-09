@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_journal/features/home/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,16 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text("Travel Journal")),
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              children: [Text("Travel Journal"), Text("By Aidan Bennett")],
-            ),
-          ),
-        ),
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomeScreen(),
+        '/details': (context) => const HomeScreen(),
+      },
     );
   }
 }
