@@ -1,21 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:travel_journal/shared/widgets/main_navbar_widget.dart';
+import 'package:travel_journal/shared/widgets/main_title_widget.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  GoogleMapController? _mapController;
+
+  static const CameraPosition _initialCameraPosition = CameraPosition(
+    target: LatLng(37.7749, -122.4194),
+    zoom: 12,
+  );
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text("Hello")),
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              children: [Text("Travel Journal"), Text("By Aidan Bennett")],
-            ),
-          ),
+    return Scaffold(
+      appBar: AppBar(title: MainTitleWidget()),
+      bottomNavigationBar: MainNavbar(currentIndex: 0),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: const [Expanded(child: _MapView())],
         ),
       ),
+    );
+  }
+}
+
+class _MapView extends StatelessWidget {
+  const _MapView();
+
+  static const CameraPosition _initialCameraPosition = CameraPosition(
+    target: LatLng(37.7749, -122.4194),
+    zoom: 12,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return GoogleMap(
+      initialCameraPosition: _initialCameraPosition,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: true,
     );
   }
 }
