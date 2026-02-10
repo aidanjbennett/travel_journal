@@ -14,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   GoogleMapController? _mapController;
 
   static const CameraPosition _initialCameraPosition = CameraPosition(
-    target: LatLng(37.7749, -122.4194),
+    target: LatLng(37.7749, -122.4194), // TODO: Change to user current location
     zoom: 12,
   );
 
@@ -37,7 +37,10 @@ class _MapView extends StatelessWidget {
   const _MapView();
 
   static const CameraPosition _initialCameraPosition = CameraPosition(
-    target: LatLng(37.7749, -122.4194),
+    target: LatLng(
+      37.7749,
+      -122.4194,
+    ), // TODO: This should also be user location
     zoom: 12,
   );
 
@@ -45,8 +48,8 @@ class _MapView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GoogleMap(
       initialCameraPosition: _initialCameraPosition,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
+      myLocationEnabled: false,
+      myLocationButtonEnabled: false,
     );
   }
 }
