@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_journal/features/entries/entries_screen.dart';
 import 'package:travel_journal/features/home/home_screen.dart';
 
 void main() {
@@ -11,10 +12,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/',
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/home',
       routes: {
-        '/': (context) => const HomeScreen(),
-        '/details': (context) => const HomeScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/entries': (context) => const EntriesScreen(),
       },
     );
   }
