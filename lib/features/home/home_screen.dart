@@ -62,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
           place.locality,
           place.administrativeArea,
         ].where((p) => p != null && p.isNotEmpty).toList();
+
         return parts.join(', ');
       }
     } catch (e) {

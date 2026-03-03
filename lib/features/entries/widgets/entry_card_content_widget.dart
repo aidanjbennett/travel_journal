@@ -75,18 +75,40 @@ class EntryCardContent extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 14,
-                  color: color.primary,
+                Padding(
+                  padding: const EdgeInsets.only(top: 1),
+                  child: Icon(
+                    Icons.location_on_outlined,
+                    size: 14,
+                    color: color.primary,
+                  ),
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  '${entry.latitude.toStringAsFixed(4)}, '
-                  '${entry.longitude.toStringAsFixed(4)} ${entry.locationName}',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: color.primary,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.locationName,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: color.primary,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
+                        ),
+                        softWrap: true,
+                      ),
+                      const SizedBox(height: 1),
+                      Text(
+                        '${entry.latitude.toStringAsFixed(4)}, '
+                        '${entry.longitude.toStringAsFixed(4)}',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: color.outline,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
