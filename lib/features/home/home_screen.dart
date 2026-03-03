@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -51,11 +52,35 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<String> _getLocationName(double latitude, double longitude) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(latitude, longitude);
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+        final parts = [
+          place.name,
+          place.locality,
+          place.administrativeArea,
+        ].where((p) => p != null && p.isNotEmpty).toList();
+        return parts.join(', ');
+      }
+    } catch (e) {
+      debugPrint('Could not get location name: $e');
+    }
+    return 'Unknown location';
+  }
+
   Future<void> _openCreateEntry() async {
+    final locationName = await _getLocationName(
+      _currentMapCenter.latitude,
+      _currentMapCenter.longitude,
+    );
+
     final entry = await Navigator.of(context).push<JournalEntry>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => AddEntryScreen(
+          locationName: locationName,
           initialLatitude: _currentMapCenter.latitude,
           initialLongitude: _currentMapCenter.longitude,
         ),
@@ -80,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
           accuracy: LocationAccuracy.high,
         ),
       );
+
       final userLatLng = LatLng(position.latitude, position.longitude);
       _currentMapCenter = userLatLng;
       _mapController?.animateCamera(
