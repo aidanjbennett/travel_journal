@@ -91,10 +91,27 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                     size: 16,
                     color: colorScheme.primary,
                   ),
-                  label: Text(
-                    '${widget.initialLatitude.toStringAsFixed(4)}, '
-                    '${widget.initialLongitude.toStringAsFixed(4)}',
-                    style: theme.textTheme.bodySmall,
+                  label: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.locationName,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.primary,
+                        ),
+                        softWrap: true,
+                      ),
+                      Text(
+                        '${widget.initialLatitude.toStringAsFixed(4)}, '
+                        '${widget.initialLongitude.toStringAsFixed(4)}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: 10,
+                          color: colorScheme.outline,
+                        ),
+                      ),
+                    ],
                   ),
                   backgroundColor: colorScheme.primaryContainer,
                 ),
