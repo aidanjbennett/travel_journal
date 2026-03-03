@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travel_journal/shared/models/journal_entry_model.dart';
 
-class EntryCardWidget extends StatelessWidget {
-  const EntryCardWidget({super.key, required this.entry});
+class EntryCardContent extends StatelessWidget {
+  const EntryCardContent({super.key, required this.entry});
 
   final JournalEntry entry;
 
@@ -64,7 +64,6 @@ class EntryCardWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-
             Text(
               entry.text,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -75,7 +74,6 @@ class EntryCardWidget extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 12),
-
             Row(
               children: [
                 Icon(
@@ -86,7 +84,7 @@ class EntryCardWidget extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '${entry.latitude.toStringAsFixed(4)}, '
-                  '${entry.longitude.toStringAsFixed(4)}',
+                  '${entry.longitude.toStringAsFixed(4)} ${entry.locationName}',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: color.primary,
                   ),

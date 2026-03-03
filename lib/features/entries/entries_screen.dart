@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_journal/features/entries/empty_state_widget.dart';
-import 'package:travel_journal/features/entries/entry_card_widget.dart';
+import 'package:travel_journal/features/entries/widgets/empty_state_widget.dart';
 import 'package:travel_journal/providers/journal_provider.dart';
 import 'package:travel_journal/shared/widgets/main_navbar_widget.dart';
 import 'package:travel_journal/shared/widgets/main_title_widget.dart';
+import 'package:travel_journal/features/entries/widgets/swipe_to_delete_card.dart';
 
 class EntriesScreen extends StatelessWidget {
   const EntriesScreen({super.key});
@@ -26,8 +26,12 @@ class EntriesScreen extends StatelessWidget {
                 ),
                 itemCount: entries.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 12),
-                itemBuilder: (context, index) =>
-                    EntryCardWidget(entry: entries[index]),
+                itemBuilder: (context, index) => SwipeToDeleteCardWidget(
+                  // Key on entryId ensures Flutter rebuilds correctly
+                  // when an item is removed from the middle of the list.
+                  key: ValueKey(entries[index].entryId),
+                  entry: entries[index],
+                ),
               ),
       ),
     );

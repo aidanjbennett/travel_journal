@@ -6,10 +6,12 @@ class AddEntryScreen extends StatefulWidget {
     super.key,
     required this.initialLatitude,
     required this.initialLongitude,
+    required this.locationName,
   });
 
   final double initialLatitude;
   final double initialLongitude;
+  final String locationName;
 
   @override
   State<AddEntryScreen> createState() => _AddEntryScreenState();
@@ -40,6 +42,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       text: _textController.text.trim(),
       latitude: widget.initialLatitude,
       longitude: widget.initialLongitude,
+      locationName: widget.locationName,
       createdAt: now,
       updatedAt: now,
     );
