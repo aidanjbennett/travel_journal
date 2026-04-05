@@ -4,7 +4,7 @@ import 'package:travel_journal/features/entries/widgets/empty_state_widget.dart'
 import 'package:travel_journal/providers/journal_provider.dart';
 import 'package:travel_journal/shared/widgets/main_navbar_widget.dart';
 import 'package:travel_journal/shared/widgets/main_title_widget.dart';
-import 'package:travel_journal/features/entries/widgets/swipe_to_delete_card.dart';
+import 'package:travel_journal/features/entries/widgets/swipe_to_delete_card_widget.dart';
 
 class EntriesScreen extends StatelessWidget {
   const EntriesScreen({super.key});
