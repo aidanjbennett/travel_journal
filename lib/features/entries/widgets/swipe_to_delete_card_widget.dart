@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_journal/features/entries/widgets/entry_card_content_widget.dart';
+import 'package:travel_journal/features/entry_detail/entry_detail_screen.dart';
 import 'package:travel_journal/providers/journal_provider.dart';
 import 'package:travel_journal/shared/models/journal_entry_model.dart';
 
@@ -20,16 +21,12 @@ class _SwipeToDeleteCardWidgetState extends State<SwipeToDeleteCardWidget>
   double _dragOffset = 0;
   bool _isDragging = false;
 
-  // How far the user must drag before the card commits to deletion.
   static const double _deleteThreshold = 120;
-  // How much drag is needed before the wobble kicks in.
   static const double _wobbleThreshold = 20;
 
-  // Wobble animation
   late final AnimationController _wobbleController;
   late final Animation<double> _wobbleAnimation;
 
-  // Snap-back / fly-off animation
   late final AnimationController _snapController;
   late final Animation<double> _snapAnimation;
 
@@ -109,7 +106,6 @@ class _SwipeToDeleteCardWidgetState extends State<SwipeToDeleteCardWidget>
   }
 
   void _commitDelete() async {
-    // Fly the card off-screen.
     final flyTarget = _dragOffset > 0
         ? MediaQuery.of(context).size.width
         : -MediaQuery.of(context).size.width;
@@ -175,7 +171,6 @@ class _SwipeToDeleteCardWidgetState extends State<SwipeToDeleteCardWidget>
             ),
           ),
 
-          // ── Card ───────────────────────────────────────────────────────
           AnimatedBuilder(
             animation: _wobbleAnimation,
             builder: (context, child) {
@@ -188,7 +183,16 @@ class _SwipeToDeleteCardWidgetState extends State<SwipeToDeleteCardWidget>
                 child: child,
               );
             },
-            child: EntryCardContent(entry: widget.entry),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => EntryDetailScreen(entry: widget.entry),
+                  ),
+                );
+              },
+              child: EntryCardContent(entry: widget.entry),
+            ),
           ),
         ],
       ),
