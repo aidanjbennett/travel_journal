@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:travel_journal/features/add_entry/widgets/photo_picker_widget.dart';
 import 'package:travel_journal/shared/models/journal_entry_model.dart';
 
 class AddEntryScreen extends StatefulWidget {
@@ -21,7 +23,9 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _textController = TextEditingController();
+  final _picker = ImagePicker();
 
+  final List<String> _imagePaths = [];
   bool _isSaving = false;
 
   @override
@@ -29,6 +33,48 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     _titleController.dispose();
     _textController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? file = await _picker.pickImage(
+      source: source,
+      imageQuality: 85,
+    );
+    if (file == null) return;
+    setState(() => _imagePaths.add(file.path));
+  }
+
+  void _removeImage(int index) {
+    setState(() => _imagePaths.removeAt(index));
+  }
+
+  void _showImageSourceSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Take a photo'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choose from library'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _save() async {
@@ -43,6 +89,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       latitude: widget.initialLatitude,
       longitude: widget.initialLongitude,
       locationName: widget.locationName,
+      imagePaths: List.unmodifiable(_imagePaths),
       createdAt: now,
       updatedAt: now,
     );
@@ -144,6 +191,13 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                   validator: (value) => (value == null || value.trim().isEmpty)
                       ? 'Please write something'
                       : null,
+                ),
+                const SizedBox(height: 24),
+
+                PhotoPicker(
+                  paths: _imagePaths,
+                  onAdd: _showImageSourceSheet,
+                  onRemove: _removeImage,
                 ),
               ],
             ),

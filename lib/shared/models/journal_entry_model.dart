@@ -5,10 +5,10 @@ final myUUID = Uuid();
 class JournalEntry {
   final String entryId;
 
-  // Entries will include array of images
-  // and audio files but focusing on text for now
+  // Data
   final String title;
   final String text;
+  final List<String> imagePaths;
 
   // Map
   final double latitude;
@@ -22,12 +22,11 @@ class JournalEntry {
   JournalEntry({
     required this.title,
     required this.text,
+    this.imagePaths = const [],
     required this.latitude,
     required this.longitude,
     required this.locationName,
     required this.createdAt,
     required this.updatedAt,
   }) : entryId = myUUID.v4();
-
-  // maybe set getters / setters
 }
