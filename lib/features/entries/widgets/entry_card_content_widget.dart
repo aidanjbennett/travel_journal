@@ -65,7 +65,7 @@ class EntryCardContent extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              entry.text,
+              entry.body,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: color.onSurfaceVariant,
                 height: 1.45,

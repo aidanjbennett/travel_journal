@@ -7,7 +7,7 @@ class JournalEntry {
 
   // Data
   final String title;
-  final String text;
+  final String body;
   final List<String> imagePaths;
   final List<String> audioPaths;
 
@@ -22,7 +22,7 @@ class JournalEntry {
 
   JournalEntry({
     required this.title,
-    required this.text,
+    required this.body,
     required this.latitude,
     required this.longitude,
     required this.locationName,

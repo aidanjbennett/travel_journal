@@ -110,7 +110,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
               ),
               const SizedBox(height: 20),
 
-              Text(widget.entry.text, style: theme.textTheme.bodyMedium),
+              Text(widget.entry.body, style: theme.textTheme.bodyMedium),
 
               if (widget.entry.imagePaths.isNotEmpty) ...[
                 const SizedBox(height: 28),
