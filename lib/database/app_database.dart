@@ -27,6 +27,9 @@ class JournalEntries extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  // Constructor for unit tests — uses an in-memory database instead of a file
+  AppDatabase.forTesting(super.executor);
+
   @override
   int get schemaVersion => 1;
 
