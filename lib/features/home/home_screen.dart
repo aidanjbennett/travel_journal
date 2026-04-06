@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if (entry != null && mounted) {
-      context.read<JournalStore>().addEntry(entry);
+      await context.read<JournalStore>().addEntry(entry);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Entry "${entry.title}" saved!'),
