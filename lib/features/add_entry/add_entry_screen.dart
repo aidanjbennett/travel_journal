@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:travel_journal/features/add_entry/widgets/photo_picker_widget.dart';
+import 'package:travel_journal/features/add_entry/widgets/audio_recorder_widget.dart';
 import 'package:travel_journal/shared/models/journal_entry_model.dart';
 
 class AddEntryScreen extends StatefulWidget {
@@ -26,12 +31,32 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   final _picker = ImagePicker();
 
   final List<String> _imagePaths = [];
+  final List<String> _audioPaths = [];
+
+  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
+  bool _recorderReady = false;
+  bool _isRecording = false;
+  Duration _recordingDuration = Duration.zero;
+
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initRecorder();
+  }
+
+  Future<void> _initRecorder() async {
+    await _recorder.openRecorder();
+    _recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+    setState(() => _recorderReady = true);
+  }
 
   @override
   void dispose() {
     _titleController.dispose();
     _textController.dispose();
+    _recorder.closeRecorder();
     super.dispose();
   }
 
@@ -77,8 +102,44 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     );
   }
 
+  Future<String> _buildAudioPath() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final filename = 'audio_${DateTime.now().millisecondsSinceEpoch}.aac';
+    return '${dir.path}/$filename';
+  }
+
+  Future<void> _toggleRecording() async {
+    if (!_recorderReady) return;
+
+    if (_isRecording) {
+      final path = await _recorder.stopRecorder();
+      setState(() {
+        _isRecording = false;
+        _recordingDuration = Duration.zero;
+        if (path != null) _audioPaths.add(path);
+      });
+    } else {
+      final path = await _buildAudioPath();
+      await _recorder.startRecorder(toFile: path, codec: Codec.aacADTS);
+      _recorder.onProgress?.listen((event) {
+        if (mounted) {
+          setState(() => _recordingDuration = event.duration);
+        }
+      });
+      setState(() => _isRecording = true);
+    }
+  }
+
+  void _removeAudio(int index) {
+    final path = _audioPaths[index];
+    setState(() => _audioPaths.removeAt(index));
+    File(path).deleteSync();
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_isRecording) await _toggleRecording();
 
     setState(() => _isSaving = true);
 
@@ -90,11 +151,18 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       longitude: widget.initialLongitude,
       locationName: widget.locationName,
       imagePaths: List.unmodifiable(_imagePaths),
+      audioPaths: List.unmodifiable(_audioPaths),
       createdAt: now,
       updatedAt: now,
     );
 
     if (mounted) Navigator.of(context).pop(entry);
+  }
+
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
   }
 
   @override
@@ -198,6 +266,16 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                   paths: _imagePaths,
                   onAdd: _showImageSourceSheet,
                   onRemove: _removeImage,
+                ),
+                const SizedBox(height: 24),
+
+                AudioRecorderWidget(
+                  isRecording: _isRecording,
+                  duration: _recordingDuration,
+                  audioPaths: _audioPaths,
+                  onToggle: _toggleRecording,
+                  onRemove: _removeAudio,
+                  formatDuration: _formatDuration,
                 ),
               ],
             ),

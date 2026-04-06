@@ -9,6 +9,7 @@ class JournalEntry {
   final String title;
   final String text;
   final List<String> imagePaths;
+  final List<String> audioPaths;
 
   // Map
   final double latitude;
@@ -22,11 +23,14 @@ class JournalEntry {
   JournalEntry({
     required this.title,
     required this.text,
-    this.imagePaths = const [],
     required this.latitude,
     required this.longitude,
     required this.locationName,
     required this.createdAt,
     required this.updatedAt,
+
+    // Audio and images paths down here
+    this.imagePaths = const [],
+    this.audioPaths = const [],
   }) : entryId = myUUID.v4();
 }
