@@ -7,7 +7,7 @@ import 'package:travel_journal/shared/models/journal_entry_model.dart';
 class EntryDetailScreen extends StatefulWidget {
   const EntryDetailScreen({super.key, required this.entry});
 
-  final JournalEntry entry;
+  final JournalEntryModel entry;
 
   @override
   State<EntryDetailScreen> createState() => _EntryDetailScreenState();

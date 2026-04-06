@@ -9,7 +9,7 @@ import 'package:travel_journal/shared/models/journal_entry_model.dart';
 class SwipeToDeleteCardWidget extends StatefulWidget {
   const SwipeToDeleteCardWidget({super.key, required this.entry});
 
-  final JournalEntry entry;
+  final JournalEntryModel entry;
 
   @override
   State<SwipeToDeleteCardWidget> createState() =>

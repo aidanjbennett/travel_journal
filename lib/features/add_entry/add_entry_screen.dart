@@ -144,7 +144,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     setState(() => _isSaving = true);
 
     final now = DateTime.now();
-    final entry = JournalEntry(
+    final entry = JournalEntryModel(
       title: _titleController.text.trim(),
       body: _textController.text.trim(),
       latitude: widget.initialLatitude,

@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _currentMapCenter.longitude,
     );
 
-    final entry = await Navigator.of(context).push<JournalEntry>(
+    final entry = await Navigator.of(context).push<JournalEntryModel>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => AddEntryScreen(

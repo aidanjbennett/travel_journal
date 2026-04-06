@@ -4,7 +4,7 @@ import 'package:travel_journal/shared/models/journal_entry_model.dart';
 class EntryCardContent extends StatelessWidget {
   const EntryCardContent({super.key, required this.entry});
 
-  final JournalEntry entry;
+  final JournalEntryModel entry;
 
   String get _formattedDate {
     final d = entry.createdAt;

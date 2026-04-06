@@ -2,7 +2,7 @@ import 'package:uuid/uuid.dart';
 
 final myUUID = Uuid();
 
-class JournalEntry {
+class JournalEntryModel {
   final String entryId;
 
   // Data
@@ -20,7 +20,7 @@ class JournalEntry {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  JournalEntry({
+  JournalEntryModel({
     required this.title,
     required this.body,
     required this.latitude,
