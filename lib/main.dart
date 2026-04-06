@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_journal/database/app_database.dart';
 import 'package:travel_journal/features/entries/entries_screen.dart';
 import 'package:travel_journal/features/home/home_screen.dart';
 import 'package:travel_journal/providers/journal_provider.dart';
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => JournalStore(),
+      create: (_) => JournalStore(AppDatabase()),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: '/home',
