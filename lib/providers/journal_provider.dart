@@ -19,12 +19,42 @@ class JournalStore extends ChangeNotifier {
         .map((rows) => rows.map(_fromRow).toList());
   }
 
+  // Fetches a single entry by ID
+  Future<JournalEntryModel?> getEntry(String entryId) async {
+    final row = await (_db.select(
+      _db.journalEntries,
+    )..where((t) => t.entryId.equals(entryId))).getSingleOrNull();
+    return row != null ? _fromRow(row) : null;
+  }
+
+  // Inserts a new entry into the database
   Future<void> addEntry(JournalEntryModel entry) async {
     await _db.transaction(() async {
       await _db.into(_db.journalEntries).insert(_toCompanion(entry));
     });
   }
 
+  // Updates an existing entry in the database
+  Future<void> updateEntry(JournalEntryModel entry) async {
+    await _db.transaction(() async {
+      await (_db.update(
+        _db.journalEntries,
+      )..where((t) => t.entryId.equals(entry.entryId))).write(
+        JournalEntriesCompanion(
+          title: Value(entry.title),
+          body: Value(entry.body),
+          latitude: Value(entry.latitude),
+          longitude: Value(entry.longitude),
+          locationName: Value(entry.locationName),
+          imagePaths: Value(jsonEncode(entry.imagePaths)),
+          audioPaths: Value(jsonEncode(entry.audioPaths)),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+    });
+  }
+
+  // Deletes an entry and its associated files from disk and the database
   Future<void> removeEntry(String entryId) async {
     await _db.transaction(() async {
       final entry = await (_db.select(
@@ -54,6 +84,8 @@ class JournalStore extends ChangeNotifier {
     });
   }
 
+  // Maps a drift-generated database row to our JournalEntryModel
+  // imagePaths and audioPaths are stored as JSON strings in SQLite
   JournalEntryModel _fromRow(JournalEntry row) {
     return JournalEntryModel(
       title: row.title,
@@ -68,6 +100,8 @@ class JournalStore extends ChangeNotifier {
     );
   }
 
+  // Maps a JournalEntryModel to a drift companion for insert operations
+  // imagePaths and audioPaths are JSON encoded for SQLite storage
   JournalEntriesCompanion _toCompanion(JournalEntryModel entry) {
     return JournalEntriesCompanion(
       entryId: Value(entry.entryId),
