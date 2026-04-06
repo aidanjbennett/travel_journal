@@ -21,6 +21,7 @@ class JournalEntryModel {
   final DateTime updatedAt;
 
   JournalEntryModel({
+    String? entryId,
     required this.title,
     required this.body,
     required this.latitude,
@@ -32,5 +33,5 @@ class JournalEntryModel {
     // Audio and images paths down here
     this.imagePaths = const [],
     this.audioPaths = const [],
-  }) : entryId = myUUID.v4();
+  }) : entryId = entryId ?? myUUID.v4();
 }

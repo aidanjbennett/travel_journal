@@ -48,7 +48,7 @@ class JournalStore extends ChangeNotifier {
           locationName: Value(entry.locationName),
           imagePaths: Value(jsonEncode(entry.imagePaths)),
           audioPaths: Value(jsonEncode(entry.audioPaths)),
-          updatedAt: Value(DateTime.now()),
+          updatedAt: Value(entry.updatedAt),
         ),
       );
     });
@@ -88,6 +88,7 @@ class JournalStore extends ChangeNotifier {
   // imagePaths and audioPaths are stored as JSON strings in SQLite
   JournalEntryModel _fromRow(JournalEntry row) {
     return JournalEntryModel(
+      entryId: row.entryId, // add this
       title: row.title,
       body: row.body,
       latitude: row.latitude,
