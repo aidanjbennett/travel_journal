@@ -14,6 +14,9 @@
     <!-- Microphone -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
+    <!-- Writing data -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <!-- Notis -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
