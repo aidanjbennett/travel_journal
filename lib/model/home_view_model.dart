@@ -1,0 +1,111 @@
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:travel_journal/providers/journal_provider.dart';
+import 'package:travel_journal/shared/models/journal_entry_model.dart';
+import 'package:geocoding/geocoding.dart';
+
+class HomeViewModel extends ChangeNotifier {
+  final JournalStore journalStore;
+
+  HomeViewModel(this.journalStore);
+
+  GoogleMapController? mapController;
+
+  bool locationPermissionGranted = false;
+  LatLng currentMapCenter = const LatLng(37.7749, -122.4194);
+
+  static const initialCameraPosition = CameraPosition(
+    target: LatLng(37.7749, -122.4194),
+    zoom: 12,
+  );
+
+  Future<void> init() async {
+    await _initLocation();
+  }
+
+  Future<void> _initLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
+      return;
+    }
+
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      locationPermissionGranted = true;
+      notifyListeners();
+
+      await moveToUserLocation();
+    }
+  }
+
+  Future<void> moveToUserLocation() async {
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      final userLatLng = LatLng(position.latitude, position.longitude);
+      currentMapCenter = userLatLng;
+
+      mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: userLatLng, zoom: 14),
+        ),
+      );
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Could not get current position: $e');
+    }
+  }
+
+  void onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+
+    if (locationPermissionGranted) {
+      moveToUserLocation();
+    }
+  }
+
+  void onCameraMove(CameraPosition position) {
+    currentMapCenter = position.target;
+  }
+
+  Future<String> getLocationName() async {
+    try {
+      final placemarks = await placemarkFromCoordinates(
+        currentMapCenter.latitude,
+        currentMapCenter.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        final place = placemarks.first;
+
+        final parts = [
+          place.name,
+          place.locality,
+          place.administrativeArea,
+        ].where((p) => p != null && p.isNotEmpty).toList();
+
+        return parts.join(', ');
+      }
+    } catch (e) {
+      debugPrint('Could not get location name: $e');
+    }
+
+    return 'Unknown location';
+  }
+
+  Future<void> saveEntry(JournalEntryModel entry) async {
+    await journalStore.addEntry(entry);
+  }
+}
