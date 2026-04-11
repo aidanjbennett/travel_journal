@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:travel_journal/features/add_entry/widgets/add_photo_tile_widget.dart';
-import 'package:travel_journal/features/add_entry/widgets/photo_tile_widget.dart';
+import 'package:travel_journal/widgets/add_entry/add_photo_tile_widget.dart';
+import 'package:travel_journal/widgets/add_entry/photo_tile_widget.dart';
 
 class PhotoPicker extends StatelessWidget {
   const PhotoPicker({
