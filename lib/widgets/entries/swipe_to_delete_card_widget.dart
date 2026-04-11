@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_journal/features/entries/widgets/entry_card_content_widget.dart';
+import 'package:travel_journal/widgets/entries/entry_card_content_widget.dart';
 import 'package:travel_journal/features/entry_detail/entry_detail_screen.dart';
 import 'package:travel_journal/providers/journal_provider.dart';
 import 'package:travel_journal/shared/models/journal_entry_model.dart';
