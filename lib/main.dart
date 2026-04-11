@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_journal/database/app_database.dart';
-import 'package:travel_journal/features/entries/entries_screen.dart';
+import 'package:travel_journal/screens/entries_screen.dart';
+import 'package:travel_journal/model/entries_view_model.dart';
 import 'package:travel_journal/screens/home_screen.dart';
 import 'package:travel_journal/model/home_view_model.dart';
 import 'package:travel_journal/providers/journal_provider.dart';
@@ -21,6 +22,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) =>
               HomeViewModel(context.read<JournalStore>())..init(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => EntriesViewModel(context.read<JournalStore>()),
         ),
       ],
       child: MaterialApp(
