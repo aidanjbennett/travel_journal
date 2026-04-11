@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:travel_journal/features/entry_detail/widgets/fullscreen_photo_viewer_widget.dart';
+import 'package:travel_journal/widgets/entry_detail/fullscreen_photo_viewer_widget.dart';
 
 class PhotoGrid extends StatelessWidget {
   const PhotoGrid({super.key, required this.paths});
