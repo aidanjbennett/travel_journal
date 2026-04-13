@@ -91,10 +91,15 @@ class HomeViewModel extends ChangeNotifier {
         final place = placemarks.first;
 
         final parts = [
-          place.name,
-          place.locality,
-          place.administrativeArea,
-        ].where((p) => p != null && p.isNotEmpty).toList();
+          place.name, // building / POI
+          place.street, // full street (IMPORTANT)
+          place.thoroughfare, // road name
+          place.subLocality, // neighbourhood
+          place.locality, // city
+          place.administrativeArea, // county/state
+          place.postalCode, // postcode
+          place.country,
+        ].where((p) => p != null && p.isNotEmpty).toSet().toList();
 
         return parts.join(', ');
       }
