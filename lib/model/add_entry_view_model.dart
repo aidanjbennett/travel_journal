@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:travel_journal/shared/models/journal_entry_model.dart';
 
 class AddEntryViewModel extends ChangeNotifier {
@@ -60,6 +62,18 @@ class AddEntryViewModel extends ChangeNotifier {
     super.dispose();
   }
 
+  Future<bool> ensureMicPermission() async {
+    var status = await Permission.microphone.request();
+
+    if (status.isGranted) return true;
+
+    if (status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+
+    return false;
+  }
+
   Future<void> pickImage(ImageSource source) async {
     final XFile? file = await _picker.pickImage(
       source: source,
@@ -92,6 +106,15 @@ class AddEntryViewModel extends ChangeNotifier {
 
       if (path != null) _audioPaths.add(path);
     } else {
+      bool hasPermission = await ensureMicPermission();
+
+      if (!hasPermission) {
+        if (kDebugMode) {
+          print("Mic permission not granted");
+        }
+        return;
+      }
+
       final path = await _buildAudioPath();
       await _recorder.startRecorder(toFile: path, codec: Codec.aacADTS);
 
