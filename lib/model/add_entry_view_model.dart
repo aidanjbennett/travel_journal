@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:travel_journal/shared/models/journal_entry_model.dart';
+import 'package:logger/logger.dart';
 
 class AddEntryViewModel extends ChangeNotifier {
   final double initialLatitude;
@@ -48,6 +49,7 @@ class AddEntryViewModel extends ChangeNotifier {
   bool get isSaving => _isSaving;
 
   Future<void> _initRecorder() async {
+    _recorder.setLogLevel(Level.off);
     await _recorder.openRecorder();
     _recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
     _recorderReady = true;
