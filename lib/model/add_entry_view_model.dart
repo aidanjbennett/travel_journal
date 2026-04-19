@@ -38,6 +38,7 @@ class AddEntryViewModel extends ChangeNotifier {
   // Recorder
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   bool _recorderReady = false;
+  bool _recorderOpened = false;
   bool _isRecording = false;
   Duration _recordingDuration = Duration.zero;
 
@@ -50,8 +51,6 @@ class AddEntryViewModel extends ChangeNotifier {
 
   Future<void> _initRecorder() async {
     _recorder.setLogLevel(Level.off);
-    await _recorder.openRecorder();
-    _recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
     _recorderReady = true;
     notifyListeners();
   }
@@ -60,20 +59,29 @@ class AddEntryViewModel extends ChangeNotifier {
   void dispose() {
     titleController.dispose();
     textController.dispose();
-    _recorder.closeRecorder();
+    if (_recorderOpened) _recorder.closeRecorder();
     super.dispose();
   }
 
   Future<bool> ensureMicPermission() async {
-    var status = await Permission.microphone.request();
+    if (Platform.isAndroid) {
+      var status = await Permission.microphone.status;
 
-    if (status.isGranted) return true;
+      if (status.isDenied) {
+        status = await Permission.microphone.request();
+      }
 
-    if (status.isPermanentlyDenied) {
-      await openAppSettings();
+      if (status.isGranted) return true;
+
+      if (status.isPermanentlyDenied) {
+        await openAppSettings();
+      }
+
+      return false;
     }
 
-    return false;
+    // On iOS, openRecorder triggers the native AVFoundation prompt directly
+    return true;
   }
 
   Future<void> pickImage(ImageSource source) async {
@@ -108,13 +116,15 @@ class AddEntryViewModel extends ChangeNotifier {
 
       if (path != null) _audioPaths.add(path);
     } else {
-      bool hasPermission = await ensureMicPermission();
+      final hasPermission = await ensureMicPermission();
+      if (!hasPermission) return;
 
-      if (!hasPermission) {
-        if (kDebugMode) {
-          print("Mic permission not granted");
-        }
-        return;
+      if (!_recorderOpened) {
+        await _recorder.openRecorder();
+        await _recorder.setSubscriptionDuration(
+          const Duration(milliseconds: 500),
+        );
+        _recorderOpened = true;
       }
 
       final path = await _buildAudioPath();
