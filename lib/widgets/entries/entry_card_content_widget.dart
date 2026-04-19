@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travel_journal/shared/models/journal_entry_model.dart';
+import 'package:travel_journal/model/journal_entry_model.dart';
 
 class EntryCardContent extends StatelessWidget {
   const EntryCardContent({super.key, required this.entry});

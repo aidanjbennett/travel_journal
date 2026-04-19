@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:travel_journal/helper.dart';
-import 'package:travel_journal/shared/models/journal_entry_model.dart';
+import 'package:travel_journal/model/journal_entry_model.dart';
 import 'package:travel_journal/widgets/entry_detail/photo_grid_widget.dart';
 
 class EntryDetailScreen extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_journal/model/add_entry_view_model.dart';
-import 'package:travel_journal/shared/models/journal_entry_model.dart';
+import 'package:travel_journal/model/journal_entry_model.dart';
 import 'package:travel_journal/widgets/add_entry/audio_recorder_widget.dart';
 import 'package:travel_journal/widgets/add_entry/photo_picker_widget.dart';
 

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:travel_journal/database/app_database.dart';
-import 'package:travel_journal/shared/models/journal_entry_model.dart';
+import 'package:travel_journal/model/journal_entry_model.dart';
 
 class JournalStore extends ChangeNotifier {
   final AppDatabase _db;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_journal/providers/journal_provider.dart';
-import 'package:travel_journal/shared/models/journal_entry_model.dart';
+import 'package:travel_journal/model/journal_entry_model.dart';
 
 class EntriesViewModel extends ChangeNotifier {
   final JournalStore store;

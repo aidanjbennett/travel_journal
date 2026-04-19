@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_journal/widgets/entries/empty_state_widget.dart';
 import 'package:travel_journal/model/entries_view_model.dart';
-import 'package:travel_journal/shared/models/journal_entry_model.dart';
-import 'package:travel_journal/shared/widgets/main_navbar_widget.dart';
-import 'package:travel_journal/shared/widgets/main_title_widget.dart';
+import 'package:travel_journal/model/journal_entry_model.dart';
+import 'package:travel_journal/widgets/main_navbar_widget.dart';
+import 'package:travel_journal/widgets/main_title_widget.dart';
 import 'package:travel_journal/widgets/entries/swipe_to_delete_card_widget.dart';
 
 class EntriesScreen extends StatelessWidget {
