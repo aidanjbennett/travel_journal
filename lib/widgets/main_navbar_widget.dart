@@ -17,6 +17,10 @@ class MainNavbar extends StatelessWidget {
           Navigator.pushReplacementNamed(context, '/entries');
         }
         break;
+      case 2:
+        if (currentIndex != 2) {
+          Navigator.pushReplacementNamed(context, '/settings');
+        }
     }
   }
 
@@ -28,6 +32,7 @@ class MainNavbar extends StatelessWidget {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
         BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Entries'),
+        BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
       ],
     );
   }

@@ -6,6 +6,7 @@ import 'package:travel_journal/model/journal_entry_model.dart';
 import 'package:travel_journal/widgets/main_navbar_widget.dart';
 import 'package:travel_journal/widgets/main_title_widget.dart';
 import 'package:travel_journal/widgets/entries/swipe_to_delete_card_widget.dart';
+import 'package:travel_journal/widgets/settings_button_widget.dart';
 
 class EntriesScreen extends StatelessWidget {
   const EntriesScreen({super.key});
@@ -15,7 +16,10 @@ class EntriesScreen extends StatelessWidget {
     final vm = context.read<EntriesViewModel>();
 
     return Scaffold(
-      appBar: AppBar(title: const MainTitleWidget()),
+      appBar: AppBar(
+        title: const MainTitleWidget(),
+        actions: [SettingsButtonWidget()],
+      ),
       bottomNavigationBar: const MainNavbar(currentIndex: 1),
       body: SafeArea(
         child: StreamBuilder<List<JournalEntryModel>>(
