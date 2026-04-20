@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_journal/screens/add_entry_screen.dart';
-import 'package:travel_journal/model/home_view_model.dart';
+import 'package:travel_journal/providers/home_view_model.dart';
 import 'package:travel_journal/model/journal_entry_model.dart';
 import 'package:travel_journal/widgets/main_navbar_widget.dart';
 import 'package:travel_journal/widgets/main_title_widget.dart';

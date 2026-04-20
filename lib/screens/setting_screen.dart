@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_journal/widgets/main_navbar_widget.dart';
 import 'package:travel_journal/widgets/main_title_widget.dart';
@@ -23,7 +24,9 @@ class SettingScreen extends StatelessWidget {
                 value: Theme.of(context).brightness == Brightness.dark,
                 onChanged: (bool value) {
                   // TODO: Implement theme switching logic
-                  print("toggled");
+                  if (kDebugMode) {
+                    print("toggled");
+                  }
                 },
               ),
             ),
@@ -35,7 +38,9 @@ class SettingScreen extends StatelessWidget {
               subtitle: const Text('Save your entries to a local file'),
               onTap: () {
                 // TODO: Logic to generate a JSON/PDF backup
-                print("tapped");
+                if (kDebugMode) {
+                  print("tapped export data");
+                }
               },
             ),
             ListTile(
@@ -47,7 +52,9 @@ class SettingScreen extends StatelessWidget {
                 'Clear All Data',
                 style: TextStyle(color: Colors.redAccent),
               ),
-              onTap: () => {print("tapped")},
+              onTap: () => {
+                if (kDebugMode) {print("tapped clear all data")},
+              },
             ),
 
             SettingSectionHeaderWidget(title: 'About'),
