@@ -1,70 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:provider/provider.dart';
 import 'package:travel_journal/helper.dart';
+import 'package:travel_journal/model/entry_detail_view_model.dart';
 import 'package:travel_journal/model/journal_entry_model.dart';
 import 'package:travel_journal/widgets/entry_detail/photo_grid_widget.dart';
 
-class EntryDetailScreen extends StatefulWidget {
+class EntryDetailScreen extends StatelessWidget {
   const EntryDetailScreen({super.key, required this.entry});
 
   final JournalEntryModel entry;
 
   @override
-  State<EntryDetailScreen> createState() => _EntryDetailScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => EntryDetailViewModel()..initPlayer(),
+      child: _EntryDetailView(entry: entry),
+    );
+  }
 }
 
-class _EntryDetailScreenState extends State<EntryDetailScreen> {
-  final FlutterSoundPlayer _player = FlutterSoundPlayer();
-  bool _playerReady = false;
-  int? _playingIndex;
+class _EntryDetailView extends StatelessWidget {
+  const _EntryDetailView({required this.entry});
 
-  @override
-  void initState() {
-    super.initState();
-    _initPlayer();
-  }
-
-  Future<void> _initPlayer() async {
-    await _player.openPlayer();
-    _player.setSubscriptionDuration(const Duration(milliseconds: 100));
-    setState(() => _playerReady = true);
-  }
-
-  @override
-  void dispose() {
-    _player.closePlayer();
-    super.dispose();
-  }
-
-  Future<void> _togglePlayback(int index) async {
-    if (!_playerReady) return;
-
-    if (_playingIndex == index) {
-      await _player.stopPlayer();
-      setState(() => _playingIndex = null);
-      return;
-    }
-
-    if (_player.isPlaying) await _player.stopPlayer();
-
-    await _player.startPlayer(
-      fromURI: widget.entry.audioPaths[index],
-      codec: Codec.aacADTS,
-      whenFinished: () {
-        if (mounted) setState(() => _playingIndex = null);
-      },
-    );
-
-    setState(() => _playingIndex = index);
-  }
+  final JournalEntryModel entry;
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<EntryDetailViewModel>();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.entry.title)),
+      appBar: AppBar(title: Text(entry.title)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -82,15 +49,15 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      widget.entry.locationName,
+                      entry.locationName,
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colorScheme.primary,
                       ),
                     ),
                     Text(
-                      '${widget.entry.latitude.toStringAsFixed(4)}, '
-                      '${widget.entry.longitude.toStringAsFixed(4)}',
+                      '${entry.latitude.toStringAsFixed(4)}, '
+                      '${entry.longitude.toStringAsFixed(4)}',
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: 10,
                         color: colorScheme.outline,
@@ -103,28 +70,28 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
               const SizedBox(height: 8),
 
               Text(
-                formatDate(widget.entry.createdAt),
+                formatDate(entry.createdAt),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.outline,
                 ),
               ),
               const SizedBox(height: 20),
 
-              Text(widget.entry.body, style: theme.textTheme.bodyMedium),
+              Text(entry.body, style: theme.textTheme.bodyMedium),
 
-              if (widget.entry.imagePaths.isNotEmpty) ...[
+              if (entry.imagePaths.isNotEmpty) ...[
                 const SizedBox(height: 28),
                 Text('Photos', style: theme.textTheme.labelLarge),
                 const SizedBox(height: 12),
-                PhotoGrid(paths: widget.entry.imagePaths),
+                PhotoGrid(paths: entry.imagePaths),
               ],
 
-              if (widget.entry.audioPaths.isNotEmpty) ...[
+              if (entry.audioPaths.isNotEmpty) ...[
                 const SizedBox(height: 28),
                 Text('Voice Memos', style: theme.textTheme.labelLarge),
                 const SizedBox(height: 12),
-                ...List.generate(widget.entry.audioPaths.length, (i) {
-                  final isPlaying = _playingIndex == i;
+                ...List.generate(entry.audioPaths.length, (i) {
+                  final isPlaying = vm.playingIndex == i;
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: AnimatedContainer(
@@ -155,7 +122,9 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                             ),
                           )
                         : null,
-                    onTap: () => _togglePlayback(i),
+                    onTap: vm.transitioning
+                        ? null
+                        : () => vm.togglePlayback(i, entry.audioPaths),
                   );
                 }),
               ],
