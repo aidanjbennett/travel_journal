@@ -6,6 +6,7 @@ import 'package:travel_journal/providers/entries_view_model.dart';
 import 'package:travel_journal/screens/home_screen.dart';
 import 'package:travel_journal/providers/home_view_model.dart';
 import 'package:travel_journal/providers/journal_provider.dart';
+import 'package:travel_journal/providers/settings_view_model.dart';
 import 'package:travel_journal/screens/setting_screen.dart';
 
 void main() {
@@ -17,9 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final db = AppDatabase();
+
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => JournalStore(AppDatabase())),
+        ChangeNotifierProvider(create: (_) => JournalStore(db)),
         ChangeNotifierProvider(
           create: (context) =>
               HomeViewModel(context.read<JournalStore>())..init(),
@@ -27,15 +30,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => EntriesViewModel(context.read<JournalStore>()),
         ),
+        ChangeNotifierProvider(create: (_) => SettingsViewModel(db)),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        initialRoute: '/home',
-        routes: {
-          '/home': (context) => const HomeScreen(),
-          '/entries': (context) => const EntriesScreen(),
-          '/settings': (context) => const SettingScreen(),
-        },
+      child: Consumer<SettingsViewModel>(
+        builder: (context, settings, _) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: settings.themeMode,
+          theme: ThemeData.light(useMaterial3: true),
+          darkTheme: ThemeData.dark(useMaterial3: true),
+          initialRoute: '/home',
+          routes: {
+            '/home': (context) => const HomeScreen(),
+            '/entries': (context) => const EntriesScreen(),
+            '/settings': (context) => const SettingScreen(),
+          },
+        ),
       ),
     );
   }
