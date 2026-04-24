@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_journal/database/app_database.dart';
 import 'package:travel_journal/providers/settings_view_model.dart';
 
@@ -14,6 +15,9 @@ void main() {
   late Directory tempDir;
 
   setUp(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
+
     db = makeDb();
     tempDir = await Directory.systemTemp.createTemp('settings_test_');
 
