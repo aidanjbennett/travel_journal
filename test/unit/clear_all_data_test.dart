@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_journal/database/app_database.dart';
 import 'package:travel_journal/providers/settings_view_model.dart';
-
 import '../helpers/database_helper.dart';
 import '../helpers/fake_path_provider.dart';
 
@@ -13,10 +13,11 @@ void main() {
   late Directory tempDir;
 
   setUp(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
+
     db = makeDb();
     tempDir = await Directory.systemTemp.createTemp('settings_test_');
-
-    // Redirect path_provider to our temp directory
     PathProviderPlatform.instance = FakePathProvider(tempDir.path);
   });
 
@@ -35,7 +36,6 @@ void main() {
     test('removes all rows from the database', () async {
       await insertEntry(db, entryId: 'e1');
       await insertEntry(db, entryId: 'e2');
-
       final vm = SettingsViewModel(db);
       await vm.clearAllData();
 
@@ -46,12 +46,10 @@ void main() {
     test('deletes image files referenced in entries', () async {
       final imageFile = File('${tempDir.path}/img.jpg');
       await imageFile.writeAsString('fake image');
-
       await insertEntry(db, imagePaths: jsonEncode([imageFile.path]));
 
       final vm = SettingsViewModel(db);
       await vm.clearAllData();
-
       expect(await imageFile.exists(), false);
     });
 

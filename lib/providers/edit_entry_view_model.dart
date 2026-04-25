@@ -5,31 +5,32 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:travel_journal/database/app_database.dart';
 import 'package:travel_journal/model/journal_entry_model.dart';
 import 'package:logger/logger.dart';
 
-class AddEntryViewModel extends ChangeNotifier {
-  final double initialLatitude;
-  final double initialLongitude;
-  final String locationName;
+class EditEntryViewModel extends ChangeNotifier {
+  final JournalEntryModel original;
+  final AppDatabase _db;
 
-  AddEntryViewModel({
-    required this.initialLatitude,
-    required this.initialLongitude,
-    required this.locationName,
-  }) {
+  EditEntryViewModel({required this.original, required AppDatabase db})
+    : _db = db {
+    titleController = TextEditingController(text: original.title);
+    textController = TextEditingController(text: original.body);
+    _imagePaths = List.of(original.imagePaths);
+    _audioPaths = List.of(original.audioPaths);
     _initRecorder();
   }
 
   // Controllers
-  final titleController = TextEditingController();
-  final textController = TextEditingController();
+  late final TextEditingController titleController;
+  late final TextEditingController textController;
 
   final ImagePicker _picker = ImagePicker();
 
   // Media
-  final List<String> _imagePaths = [];
-  final List<String> _audioPaths = [];
+  late List<String> _imagePaths;
+  late List<String> _audioPaths;
 
   List<String> get imagePaths => List.unmodifiable(_imagePaths);
   List<String> get audioPaths => List.unmodifiable(_audioPaths);
@@ -44,7 +45,7 @@ class AddEntryViewModel extends ChangeNotifier {
   bool get isRecording => _isRecording;
   Duration get recordingDuration => _recordingDuration;
 
-  // UI State
+  // UI state
   bool _isSaving = false;
   bool get isSaving => _isSaving;
 
@@ -65,21 +66,11 @@ class AddEntryViewModel extends ChangeNotifier {
   Future<bool> ensureMicPermission() async {
     if (Platform.isAndroid) {
       var status = await Permission.microphone.status;
-
-      if (status.isDenied) {
-        status = await Permission.microphone.request();
-      }
-
+      if (status.isDenied) status = await Permission.microphone.request();
       if (status.isGranted) return true;
-
-      if (status.isPermanentlyDenied) {
-        await openAppSettings();
-      }
-
+      if (status.isPermanentlyDenied) await openAppSettings();
       return false;
     }
-
-    // On iOS, openRecorder triggers the native AVFoundation prompt directly
     return true;
   }
 
@@ -89,7 +80,6 @@ class AddEntryViewModel extends ChangeNotifier {
       imageQuality: 85,
     );
     if (file == null) return;
-
     _imagePaths.add(file.path);
     notifyListeners();
   }
@@ -112,7 +102,6 @@ class AddEntryViewModel extends ChangeNotifier {
       final path = await _recorder.stopRecorder();
       _isRecording = false;
       _recordingDuration = Duration.zero;
-
       if (path != null) _audioPaths.add(path);
     } else {
       final hasPermission = await ensureMicPermission();
@@ -150,30 +139,29 @@ class AddEntryViewModel extends ChangeNotifier {
   Future<JournalEntryModel?> save(GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) return null;
 
-    if (_isRecording) {
-      await toggleRecording();
-    }
+    if (_isRecording) await toggleRecording();
 
     _isSaving = true;
     notifyListeners();
 
-    final now = DateTime.now();
-
-    final entry = JournalEntryModel(
+    final updated = JournalEntryModel(
+      entryId: original.entryId,
       title: titleController.text.trim(),
       body: textController.text.trim(),
-      latitude: initialLatitude,
-      longitude: initialLongitude,
-      locationName: locationName,
+      latitude: original.latitude,
+      longitude: original.longitude,
+      locationName: original.locationName,
       imagePaths: List.unmodifiable(_imagePaths),
       audioPaths: List.unmodifiable(_audioPaths),
-      createdAt: now,
-      updatedAt: now,
+      createdAt: original.createdAt,
+      updatedAt: DateTime.now(),
     );
+
+    await _db.updateEntry(updated);
 
     _isSaving = false;
     notifyListeners();
 
-    return entry;
+    return updated;
   }
 }

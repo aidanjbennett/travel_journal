@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_journal/database/app_database.dart';
 import 'package:travel_journal/widgets/entries/entry_card_content_widget.dart';
 import 'package:travel_journal/screens/entry_detail_screen.dart';
-import 'package:travel_journal/providers/journal_provider.dart';
 import 'package:travel_journal/model/journal_entry_model.dart';
 
 class SwipeToDeleteCardWidget extends StatefulWidget {
@@ -118,7 +118,7 @@ class _SwipeToDeleteCardWidgetState extends State<SwipeToDeleteCardWidget>
     if (!mounted) return;
     setState(() => _deleted = true);
 
-    context.read<JournalStore>().removeEntry(widget.entry.entryId);
+    await context.read<AppDatabase>().removeEntry(widget.entry.entryId);
   }
 
   Future<void> _animateTo(double target) async {
@@ -170,7 +170,6 @@ class _SwipeToDeleteCardWidgetState extends State<SwipeToDeleteCardWidget>
               ),
             ),
           ),
-
           AnimatedBuilder(
             animation: _wobbleAnimation,
             builder: (context, child) {
@@ -186,8 +185,9 @@ class _SwipeToDeleteCardWidgetState extends State<SwipeToDeleteCardWidget>
             child: GestureDetector(
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => EntryDetailScreen(entry: widget.entry),
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        EntryDetailScreen(entryId: widget.entry.entryId),
                   ),
                 );
               },

@@ -1,49 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:travel_journal/database/app_database.dart';
 import 'package:travel_journal/helper.dart';
-import 'package:travel_journal/providers/add_entry_view_model.dart';
 import 'package:travel_journal/model/journal_entry_model.dart';
+import 'package:travel_journal/providers/edit_entry_view_model.dart';
 import 'package:travel_journal/widgets/add_entry/audio_recorder_widget.dart';
 import 'package:travel_journal/widgets/add_entry/photo_picker_widget.dart';
 
-class AddEntryScreen extends StatelessWidget {
-  const AddEntryScreen({
-    super.key,
-    required this.initialLatitude,
-    required this.initialLongitude,
-    required this.locationName,
-  });
+class EditEntryScreen extends StatelessWidget {
+  const EditEntryScreen({super.key, required this.entry});
 
-  final double initialLatitude;
-  final double initialLongitude;
-  final String locationName;
+  final JournalEntryModel entry;
 
   @override
   Widget build(BuildContext context) {
+    final db = context.read<AppDatabase>();
+
     return ChangeNotifierProvider(
-      create: (_) => AddEntryViewModel(
-        initialLatitude: initialLatitude,
-        initialLongitude: initialLongitude,
-        locationName: locationName,
-      ),
-      child: const _AddEntryView(),
+      create: (_) => EditEntryViewModel(original: entry, db: db),
+      child: const _EditEntryView(),
     );
   }
 }
 
-class _AddEntryView extends StatefulWidget {
-  const _AddEntryView();
+class _EditEntryView extends StatefulWidget {
+  const _EditEntryView();
 
   @override
-  State<_AddEntryView> createState() => _AddEntryViewState();
+  State<_EditEntryView> createState() => _EditEntryViewState();
 }
 
-class _AddEntryViewState extends State<_AddEntryView> {
+class _EditEntryViewState extends State<_EditEntryView> {
   final _formKey = GlobalKey<FormState>();
 
   void _showImageSourceSheet(BuildContext context) {
-    final vm = context.read<AddEntryViewModel>();
+    final vm = context.read<EditEntryViewModel>();
 
     showModalBottomSheet<void>(
       context: context,
@@ -75,13 +67,13 @@ class _AddEntryViewState extends State<_AddEntryView> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<AddEntryViewModel>();
+    final vm = context.watch<EditEntryViewModel>();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Entry'),
+        title: const Text('Edit Entry'),
         leading: IconButton(
           tooltip: 'Discard',
           icon: const Icon(Icons.close),
@@ -92,10 +84,9 @@ class _AddEntryViewState extends State<_AddEntryView> {
             onPressed: vm.isSaving
                 ? null
                 : () async {
-                    final JournalEntryModel? entry = await vm.save(_formKey);
-
-                    if (entry != null && context.mounted) {
-                      Navigator.of(context).pop(entry);
+                    final JournalEntryModel? updated = await vm.save(_formKey);
+                    if (updated != null && context.mounted) {
+                      Navigator.of(context).pop(updated);
                     }
                   },
             child: vm.isSaving
@@ -109,7 +100,6 @@ class _AddEntryViewState extends State<_AddEntryView> {
           const SizedBox(width: 8),
         ],
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -129,15 +119,15 @@ class _AddEntryViewState extends State<_AddEntryView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        vm.locationName,
+                        vm.original.locationName,
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: colorScheme.primary,
                         ),
                       ),
                       Text(
-                        '${vm.initialLatitude.toStringAsFixed(4)}, '
-                        '${vm.initialLongitude.toStringAsFixed(4)}',
+                        '${vm.original.latitude.toStringAsFixed(4)}, '
+                        '${vm.original.longitude.toStringAsFixed(4)}',
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: colorScheme.outline,

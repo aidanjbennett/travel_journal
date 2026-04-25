@@ -5,9 +5,10 @@ import 'package:travel_journal/screens/entries_screen.dart';
 import 'package:travel_journal/providers/entries_view_model.dart';
 import 'package:travel_journal/screens/home_screen.dart';
 import 'package:travel_journal/providers/home_view_model.dart';
-import 'package:travel_journal/providers/journal_provider.dart';
 import 'package:travel_journal/providers/settings_view_model.dart';
 import 'package:travel_journal/screens/setting_screen.dart';
+
+final _db = AppDatabase();
 
 void main() {
   runApp(const MyApp());
@@ -18,19 +19,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final db = AppDatabase();
-
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => JournalStore(db)),
-        ChangeNotifierProvider(
-          create: (context) =>
-              HomeViewModel(context.read<JournalStore>())..init(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => EntriesViewModel(context.read<JournalStore>()),
-        ),
-        ChangeNotifierProvider(create: (_) => SettingsViewModel(db)),
+        Provider<AppDatabase>(create: (_) => _db),
+        ChangeNotifierProvider(create: (_) => HomeViewModel(_db)..init()),
+        ChangeNotifierProvider(create: (_) => EntriesViewModel(_db)),
+        ChangeNotifierProvider(create: (_) => SettingsViewModel(_db)),
       ],
       child: Consumer<SettingsViewModel>(
         builder: (context, settings, _) => MaterialApp(
