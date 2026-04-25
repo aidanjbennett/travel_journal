@@ -17,7 +17,8 @@ String formatDate(DateTime dt) {
 }
 
 String formatDuration(Duration d) {
-  final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+  final totalMinutes = d.inMinutes;
   final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+  final minutes = totalMinutes.toString().padLeft(2, '0');
   return '$minutes:$seconds';
 }
