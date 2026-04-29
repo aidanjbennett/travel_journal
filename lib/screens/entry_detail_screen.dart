@@ -99,7 +99,7 @@ class _EntryDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    formatDate(entry.createdAt),
+                    formatDateLong(entry.createdAt),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.outline,
                     ),

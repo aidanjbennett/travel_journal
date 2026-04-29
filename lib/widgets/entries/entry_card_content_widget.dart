@@ -1,29 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:travel_journal/helper.dart';
 import 'package:travel_journal/model/journal_entry_model.dart';
 
 class EntryCardContent extends StatelessWidget {
   const EntryCardContent({super.key, required this.entry});
 
   final JournalEntryModel entry;
-
-  String get _formattedDate {
-    final d = entry.createdAt;
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[d.month - 1]} ${d.day}, ${d.year}';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +38,7 @@ class EntryCardContent extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  _formattedDate,
+                  formattedDateShort(entry.createdAt),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: color.outline,
                   ),

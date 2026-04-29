@@ -1,4 +1,4 @@
-String formatDate(DateTime dt) {
+String formatDateLong(DateTime dt) {
   const months = [
     'January',
     'February',
@@ -12,6 +12,24 @@ String formatDate(DateTime dt) {
     'October',
     'November',
     'December',
+  ];
+  return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
+}
+
+String formattedDateShort(DateTime dt) {
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
 }
