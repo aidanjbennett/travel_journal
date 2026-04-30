@@ -1,3 +1,6 @@
+// AI Transparency Statement
+// I Aidan Bennett did not use AI for this bit of work
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_journal/database/app_database.dart';
